@@ -1,53 +1,55 @@
 <template>
 	<component
-		@send-data-add-content="proxyCallAdditionalContent"
 		@close-dlg="proxyClose"
-		@apply="proxyApply"
+		@change-form-data="proxyChangeFormData"
+		@save="proxySave"
 		:data="$attrs.data"
-		:linkEvent="$attrs.linkEvent"
-		:is="getTemplate"></component>
+		:dlgStyle="$attrs.dlgStyle"
+		:is="getDlg"></component>
 </template>
 
 <script>
-import TmpConfirm from '@/components/dialogs/templates/Confirm.vue';
-import TmpForm from '@/components/dialogs/templates/form/Form.vue';
+import DlgConfirm from '@/components/dialogs/Confirm.vue';
+import DlgForm from '@/components/dialogs/form/Form.vue';
 
 
 export const LIST_DLG = {
-	create: 1,
-	edit: 2,
-	deactivate: 3
+	create: 'create',
+	edit: 'edit',
+	deactivate: 'deactivate',
+	delete: 'delete',
+	deleteAll: 'deleteAll'
 };
 
 export default {
 	name: 'Table_Dlg_Content',
 	inheritAttrs: false,
 	props: {
-		type: Number
+		type: String
 	},
 	components: {
-		TmpConfirm,
-		TmpForm
+		DlgConfirm,
+		DlgForm
 	},
 	methods: {
 		proxyClose () {
 			this.$emit('close-dlg');
 		},
-		proxyApply (data) {
-			this.$emit('apply', data);
+		proxySave (data) {
+			this.$emit('save', data);
 		},
-		proxyCallAdditionalContent (data) {
-			this.$emit('send-data-add-content', data);
+		proxyChangeFormData (data) {
+			this.$emit('change-form-data', data);
 		}
 	},
 	computed: {
-		getTemplate () {
+		getDlg () {
 			switch (this.type) {
-				case LIST_DLG.create: return 'TmpForm';
-				case LIST_DLG.edit: return 'TmpForm';
-				case LIST_DLG.deactivate: return 'TmpConfirm';
-				default:
-					console.log('type dlg is not definr');
+				case LIST_DLG.create: return 'DlgForm';
+				case LIST_DLG.edit: return 'DlgForm';
+				case LIST_DLG.deactivate: return 'DlgConfirm';
+				case LIST_DLG.delete: return 'DlgConfirm';
+				case LIST_DLG.deleteAll: return 'DlgConfirm';
 			}
 		}
 	}

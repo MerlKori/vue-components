@@ -1,26 +1,27 @@
 <template>
 	<div id="app">
-		<Checkbox />
+		<TheSidebar />
+		<main>
+			<router-view/>
+		</main>
+		<ThePreloader />
+		<TheNotificationsList />
 	</div>
 </template>
 
 <script>
-import Checkbox from '@/components/checkbox/Checkbox.vue';
+import TheSidebar from '@/components/sidebar/TheSidebar.vue';
+import ThePreloader from '@/components/ThePreloader.vue';
+import TheNotificationsList from '@/components/notifications/TheNotificationsList.vue';
 
 export default {
-	name: 'app',
-	components: {Checkbox}
+	name: 'App',
+	components: {
+		TheSidebar,
+		ThePreloader,
+		TheNotificationsList
+	}
 };
 </script>
 
-<style>
-@import "assets/style/index.css";
-#app {
-	font-family: 'Avenir', Helvetica, Arial, sans-serif;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	text-align: center;
-	color: #2c3e50;
-	margin-top: 60px;
-}
-</style>
+<style src="./assets/styles/index.css"></style>

@@ -14,7 +14,9 @@ export default {
 .v-table__footer {
 	display: flex;
 	align-items: center;
-	padding: 5px 10px;
+	justify-content: flex-end;
+	height: 40px;
+	padding: 0 10px;
 	border-top: var(--bd-grey-1);
 }
 </style>

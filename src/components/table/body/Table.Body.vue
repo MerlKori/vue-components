@@ -1,77 +1,129 @@
 <template>
 	<div
 		ref="tableBody"
-		@scroll="addShadow($event)"
-		:style="{'height': height}"
-		class="v-table__body"
+		@scroll="scrollHandler($event)"
+		class="v-table__body scrollbar"
 	>
 		<!-- DUMMY BLOCK TO SCROLL -->
 		<div
-			v-for="(i, idx) in renderMap"
-			:key="idx"
-			class="v-table__body-dummy">
-			<div></div>
-		</div>
+			:style="scheme.style.bodyRow"
+			class="v-table__body-dummy"></div>
+
+		<!-- table Empty title -->
+		<TableIsEmpty v-if="isEmpty" />
+
+		<!-- Loading data for Table -->
+		<TableLoader v-if="isLoading" />
+
+		<!-- ROWS -->
 		<slot
 			v-for="(row) in data"
+			:eventResize="eventResizeTable"
 			:row="row">
 		</slot>
-		<TableIsEmpty :IsEmpty="$attrs.IsEmpty" />
 	</div>
 </template>
 
 <script>
-// components
-import TableIsEmpty from './Table.IsEmpty.vue';
+/* other */
+import ResizeObserver from 'resize-observer-polyfill';
 
-// other
-// import ResizeObserver from 'resize-observer-polyfill';
+/* components */
+import TableIsEmpty from '../VueTable.IsEmpty.vue';
+import TableLoader from '../VueTable.Loader.vue';
 
 export default {
 	name: 'Table_Body',
 	components: {
-		TableIsEmpty
+		TableIsEmpty,
+		TableLoader
 	},
 	inheritAttrs: false,
 	props: {
-		data: Array,
-		renderMap: Array
+		data: {
+			type: Array,
+			default: () => []
+		},
+		loadingProcess: Boolean,
+		scheme: Object
 	},
 	data: () => ({
-		height: null
+		height: null,
+		eventResizeTable: false
 	}),
 	mounted () {
-		this.setHeight();
-		// this.$nextTick(() => {
-		// 	const obs = new ResizeObserver(() => {
-		// 		/* entries, observer */
-		// 		// this.resizeHeader();
-		// 	});
-		// 	obs.observe(this.$refs.tableBody);
-		// });
-		// resizeHeader () {
-		// 	if (this.$refs.tableHead) {
-		// 		this.$refs.tableHead.style.width = `${this.$refs.tableBody.clientWidth}px`;
-		// 	}
-		// },
-		// scrollTableHead (e) {
-		// 	this.$refs.tableHead.scrollLeft = e.target.scrollLeft;
-		// }
-		// @scroll="scrollTableHead($event)"
+		this.$nextTick(() => {
+			const obs = new ResizeObserver(entries => {
+				/* entries, observer */
+				this.setShadowForCell(entries[0].target);
+				this.resizeHeader();
+			});
+			obs.observe(this.$refs.tableBody);
+		});
 	},
 	methods: {
-		addShadow (event) {
-			const el = event.target;
+		/* SCROLL EVENT */
+		addShadow (el, header) {
 			const scrollTop = el.scrollTop;
-			const header = el.previousElementSibling;
-			header.style.boxShadow = scrollTop !== 0 ? '0 12px 30px -16px rgba(36,36,36, .5)' : 'none';
+			header.style.boxShadow = scrollTop !== 0 ? '0 12px 15px -16px rgba(36,36,36, .5)' : 'none';
 		},
-		setHeight () {
-			const el = this.$refs.tableBody;
-			const parentHeight = el.parentElement.offsetHeight;
-			const headerHeight = el.previousElementSibling.offsetHeight;
-			const footerHeight = el.nextElementSibling ? el.nextElementSibling.offsetHeight : 0;
-			this.height = `calc(${parentHeight}px - (${headerHeight}px + ${footerHeight}px + 50px))`;
+		scrollTableHead (el, header) {
+			header.scrollLeft = el.scrollLeft;
+		},
+		scrollHandler (event) {
+			const el = event.target;
+			const header = el.previousElementSibling;
+			if (!header) return;
+			this.addShadow(el, header);
+			this.scrollTableHead(el, header);
+			this.setShadowForCell(el);
+		},
+
+		/* SET SIZES */
+		resizeHeader () {
+			const header = !this.$refs.tableBody ? null : this.$refs.tableBody.previousElementSibling;
+			if (!header) return;
+			header.style.width = `${this.$refs.tableBody.clientWidth}px`;
+		},
+
+		/* SET STYLE */
+		setShadowForCell (el) {
+			const setVariables = (element, variable, value) => (!element.parentElement ? null : element.parentElement.style.setProperty(variable, value));
+			const withoutScroll = el.scrollWidth === el.clientWidth;
+			const scrollPositionEnd = el.clientWidth + el.scrollLeft >= el.scrollWidth - 1;
+			const scrollPositionStart = el.scrollLeft === 0;
+
+			/* Reset shadow */
+			if (withoutScroll) {
+				setVariables(el, '--sticky-bs-left', 'none');
+				setVariables(el, '--sticky-bs-right', 'none');
+			}
+			if (scrollPositionEnd) {
+				setVariables(el, '--sticky-bs-right', 'none');
+			}
+			if (scrollPositionStart) {
+				setVariables(el, '--sticky-bs-left', 'none');
+			}
+
+			/* Add shadow */
+			if (!withoutScroll && !scrollPositionStart) {
+				setVariables(el, '--sticky-bs-left', '3px 0 8px rgba(0,0,0, .22)');
+			}
+			if (!withoutScroll && !scrollPositionEnd) {
+				setVariables(el, '--sticky-bs-right', '-3px 0 8px rgba(0,0,0, .22)');
+			}
+			if (!withoutScroll && !scrollPositionStart && !scrollPositionEnd) {
+				setVariables(el, '--sticky-bs-right', '-3px 0 8px rgba(0,0,0, .22)');
+				setVariables(el, '--sticky-bs-left', '3px 0 8px rgba(0,0,0, .22)');
+			}
+		}
+	},
+	computed: {
+		isEmpty () {
+			return this.data.length === 0 && !this.loadingProcess;
+		},
+		isLoading () {
+			return this.data.length === 0 && this.loadingProcess;
 		}
 	}
 };
@@ -79,14 +131,17 @@ export default {
 
 <style>
 .v-table__body {
+	position: relative;
+	display: grid;
+	grid-auto-rows: max-content;
 	width: 100%;
-	overflow-y: auto;
-	overflow-x: hidden;
+	height: calc(100% - 75px);
+	flex-grow: 1;
+	overflow: auto;
 }
 .v-table__body-dummy {
 	display: grid;
-	grid-auto-rows: 1px;
-	grid-gap: 10px;
+	height: 1px;
 	opacity: 0;
 	visibility: hidden;
 }

@@ -1,73 +1,59 @@
 <template>
 	<div class="dlg-additional-content">
-		<button
-			@click="close"
-			class="dlg-additional-content__btn-close">
-			<font-awesome-icon :icon="faWindowClose" size="lg" />
-		</button>
 		<VueTable
-			:label="scheme.tableLabel"
-			:tableStyle="scheme.style"
-			:renderMap="scheme.renderMap"
-			:data="data"
+			class="dlg-additional-content__table"
+			:scheme="scheme"
+			:withActions="true"
+			:data="getAddContentData"
 			>
-			<TableBodyRow
+			<button
+				slot="control-panel-btn-close"
+				@click="close"
+				class="dlg-additional-content__btn-close btn--red-2 icon-close-2">
+			</button>
+
+			<TableBtns
+				slot="row-buttons"
 				slot-scope="{row}"
-				:row="row"
-				:renderMap="scheme.renderMap"
-				:bodyRowStyle="scheme.style.bodyRow">
-				<TableBodyRowBtn
-					slot="row-buttons"
-					@click.native="linkEl(row)"
-					:type="btnType" />
-			</TableBodyRow>
+				@click.native="linkElement(row)"
+				:type="btnType" />
 		</VueTable>
 	</div>
 </template>
 
 <script>
-/* components */
-import VueTable from '@/components/table/VueTable.vue';
-import TableBodyRow from '@/components/table/body/Table.Body.Row.vue';
-import TableBodyRowBtn, {BTNS_LIST} from '@/components/table/body/Table.Body.Row.Btn.vue';
+/* store */
+import {mapState, mapGetters, mapActions} from 'vuex';
+import {listStoreModules} from '@/store/index';
 
-import {faWindowClose} from '@fortawesome/free-solid-svg-icons';
+/* components */
+import VueTable from '@/components/table/template/VueTable.vue';
+import TableBtns, {BTNS_LIST} from '@/components/table/Table.Btns.vue';
 
 export default {
 	name: 'Dlg_AdditionalContent',
 	components: {
 		VueTable,
-		TableBodyRow,
-		TableBodyRowBtn
-	},
-	props: {
-		data: {
-			type: Array,
-			default: () => []
-		},
-		scheme: {
-			type: Object,
-			default: () => ({
-				tableLabel: null,
-				renderMap: [],
-				style: {
-					bodyRow: null,
-					header: null,
-					main: null
-				}
-			})
-		}
+		TableBtns
 	},
 	data: () => ({
-		faWindowClose,
 		btnType: BTNS_LIST.link
 	}),
 	methods: {
-		close () {
-			this.$emit('close-add-content');
-		},
-		linkEl (el) {
-			this.$emit('link-el', el);
+		...mapActions(listStoreModules.DlgAddContent.name, {
+			close: listStoreModules.DlgAddContent.types.actions.HIDE_ADD_CONTENT,
+			linkElement: listStoreModules.DlgAddContent.types.actions.ADD_LINK
+		})
+	},
+	computed: {
+		...mapState(listStoreModules.DlgAddContent.name, {
+			scheme: listStoreModules.DlgAddContent.types.state.TABLE_SCHEME
+		}),
+		...mapGetters(listStoreModules.Data.name, {
+			getExtenddData: listStoreModules.Data.types.getters.GET_EXTEND_DATA
+		}),
+		getAddContentData () {
+			return this.getExtenddData(this.scheme.reconfigMap, this.scheme.entity);
 		}
 	}
 };
@@ -75,22 +61,18 @@ export default {
 
 <style>
 .dlg-additional-content {
-	background-color: #fff;
 	width: 100%;
 	height: 100%;
+	overflow: hidden;
 }
 
 .dlg-additional-content__btn-close {
-	position: absolute;
-	top: 5px;
-	right: 2px;
-	padding: 2px;
-	font-size: 18px;
-	background-color: #fff;
-	color: #f56c6c;
-	transition: color .25s;
+	margin-left: auto;
+	padding: 3px;
+	font-size: 14px;
+	border-radius: 3px;
 }
-.dlg-additional-content__btn-close:hover {
-	color: red;
+.dlg-additional-content__table {
+	height: 100%;
 }
 </style>

@@ -1,0 +1,10 @@
+:root {
+	--bd-grey-1: 1px solid var(--c-grey-4);
+	--bd-grey-2: 1px solid #F5F7F9;
+	--bd-grey-3: 1px solid #ebebeb;
+	--bd-grey-4: 2px solid #e4e7ed;
+	--bd-grey-5: 1px solid #dcdfe6;
+
+
+	--bd-blue-1: 1px solid #F1F3F7;
+}

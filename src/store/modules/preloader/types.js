@@ -1,0 +1,8 @@
+export default {
+	state: {
+		PRELOADER_VISIBILITY: 'PRELOADER_VISIBILITY'
+	},
+	mutations: {
+		SET_VISIBILITY_PRELOADER: 'SET_VISIBILITY_PRELOADER'
+	}
+};

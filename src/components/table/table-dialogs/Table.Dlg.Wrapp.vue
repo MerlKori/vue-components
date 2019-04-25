@@ -19,12 +19,10 @@
 						<!-- DLG MAIN CONTENT -->
 						<slot></slot>
 					</div>
-					<div
+					<TableDlgAdditionalContent
 						v-if="visibilityAddContent"
 						key="additional"
-						class="dlg__content-additional">
-						<slot name="dlg-additional-content"></slot>
-					</div>
+						class="dlg__content-additional"/>
 				</transition-group>
 			</transition>
 		</div>
@@ -32,11 +30,20 @@
 </template>
 
 <script>
+/* store */
+import {mapState, mapActions} from 'vuex';
+import {listStoreModules} from '@/store/index';
+
+/* components */
+import TableDlgAdditionalContent from '@/components/table/table-dialogs/Table.Dlg.AdditionalContent.vue';
+
 export default {
 	name: 'Table_Dlg_Wrapp',
+	components: {
+		TableDlgAdditionalContent
+	},
 	props: {
-		visibility: Boolean,
-		visibilityAddContent: Boolean
+		visibility: Boolean
 	},
 	updated () {
 		/* to catch the event keydown = esc */
@@ -45,9 +52,18 @@ export default {
 		}
 	},
 	methods: {
+		...mapActions(listStoreModules.DlgAddContent.name, {
+			hideAddContent: listStoreModules.DlgAddContent.types.actions.HIDE_ADD_CONTENT
+		}),
 		closeDlg () {
 			this.$emit('close-dlg');
+			this.hideAddContent();
 		}
+	},
+	computed: {
+		...mapState(listStoreModules.DlgAddContent.name, {
+			visibilityAddContent: listStoreModules.DlgAddContent.types.state.VISIBILITY
+		})
 	}
 };
 </script>
@@ -59,10 +75,10 @@ export default {
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	background-color: rgba(0, 0, 0, .4);
+	background-color: rgba(0, 0, 0, .3);
 	overflow: hidden;
 	outline: none;
-	z-index: 100;
+	z-index: 1000;
 }
 .dlg__content-wrapp {
 	display: flex;
@@ -73,9 +89,9 @@ export default {
 .dlg__content {
 	position: relative;
 	left: 50%;
-	max-width: 400px;
 	background-color: #fff;
-	box-shadow: 0 0 15px rgba(0,0,0, .4);
+	border-radius: 8px;
+	box-shadow: 0 0 25px rgba(0,0,0, .4);
 	transform: translateX(-50%);
 	z-index: 105;
 	transition: all .3s;
@@ -91,6 +107,7 @@ export default {
 	height: 90%;
 	flex-grow: 1;
 	margin: auto 20px auto 15px;
+	overflow: hidden;
 	z-index: 5;
 }
 

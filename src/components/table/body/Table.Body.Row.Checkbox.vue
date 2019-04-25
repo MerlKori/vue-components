@@ -1,13 +1,14 @@
 <template>
-	<Checkbox v-model="toggleCheckbox" />
+	<VueCheckbox v-model="toggleCheckbox" />
 </template>
 
 <script>
-import Checkbox from '@/components/checkbox/Checkbox.vue';
+import VueCheckbox from '@/components/VueCheckbox.vue';
 
 export default {
 	name: 'Table_Body_Row_Checkbox',
-	components: {Checkbox},
+	components: {VueCheckbox},
+	inheritAttrs: false,
 	props: {
 		checked: {
 			type: Boolean,

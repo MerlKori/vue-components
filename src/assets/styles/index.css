@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700&subset=cyrillic');
+
+@import url('./reset.css');
+@import url('./main.css');
+
+/* variables */
+@import url('./variables/index.css');
+
+/* libraries */
+@import url('./lib/bootstrap-lite.css');
+@import url('./lib/icomoon.css');
+
+/* components */
+@import url('./components/tooltip.css');
+@import url('./components/fields.css');
+@import url('./components/btns.css');
+@import url('./components/clicks.css');
+@import url('./components/scrollbar.css');

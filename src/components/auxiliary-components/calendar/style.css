@@ -1,0 +1,87 @@
+.v-calendar {
+	background-color: #fff;
+	width: 300px;
+}
+
+.v-calendar__hero {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	padding: 5px 0px 7px;
+	background-color: #fff;
+}
+.v-calendar__hero-select-date {
+	flex-grow: 1;
+	font-size: 14px;
+	text-align: center;
+	text-transform: lowercase;
+	color: var(--c-grey-7);
+}
+
+.v-calendar__hero-btns {
+	position: relative;
+	font-size: 16px;
+	padding: 5px;
+	margin: 0 3px;
+	background-color: #fff;
+	color: #333;
+	border-radius: 3px;
+	transition: opacity .25s;
+}
+
+/*  ================================== NAMES OF DAYS =============================== */
+.v-calendar__days {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	grid-gap: 2px;
+	margin: 10px auto;
+	padding-bottom: 10px;
+	font-size: 12px;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-image: linear-gradient(to right, #fff 20%, var(--c-grey-5) 50%, #fff 70%);
+	border-image-slice: 20% 30% 30% 20%;
+}
+
+.v-calendar-days__days-item {
+	font-weight: 500;
+	color: var(--c-grey-7);
+	text-align: center;
+	user-select: none;
+}
+
+/*  =================================== DAYS ================================ */
+.v-calendar__body {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	grid-gap: 2px;
+}
+.v-calendar__body-cell {
+	overflow: hidden;
+	cursor: pointer;
+	user-select: none;
+	height: 38px;
+	line-height: 38px;
+	text-align: center;
+	font-size: 13px;
+	color: #606266;
+	transition: all .2s;
+}
+.v-calendar__body-cell:hover {
+	background: var(--c-blue-5);
+	color: #fff;
+	opacity: 1;
+}
+
+/* midification cell */
+.vc-body__cell--opacity {
+	opacity: .3;
+}
+.vc-body__cell--today {
+	border: 1px solid var(--c-blue-5);
+}
+.vc-body__cell--select {
+	background: var(--c-blue-5);
+	color: #fff;
+}

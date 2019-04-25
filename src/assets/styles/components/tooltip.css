@@ -1,0 +1,101 @@
+.tooltip {
+	--c-bg: #49A5FE;
+	--visibility: hidden;
+	--opacity: 0;
+	--bd-width: 5px;
+	--offset: 15px;
+}
+/* show tooltip */
+.tooltip:hover {
+	--visibility: visible;
+	--opacity: 1;
+}
+
+.tooltip {
+	position: relative;
+	z-index: 100;
+}
+.tooltip:focus {
+	outline: none;
+}
+.tooltip::after {
+	content: attr(data-tooltip);
+	padding: .4em .8em;
+	font-size: 13px;
+	color: #fff;
+	white-space: nowrap;
+	border-radius: 2px;
+	background-color: var(--c-bg);
+}
+.tooltip::before {
+	content: "";
+}
+.tooltip::after,
+.tooltip::before {
+	position: absolute;
+	visibility: var(--visibility);
+	opacity: var(--opacity);
+	transition: opacity .25s;
+	pointer-events: none;
+}
+
+/* ================================== directions ================================== */
+/* left */
+.tooltip--left::before {
+	top: 50%;
+	left: calc(-1 * var(--offset));
+	border-top: var(--bd-width) solid transparent;
+	border-bottom: var(--bd-width) solid transparent;
+	border-left: var(--bd-width) solid var(--c-bg);
+	transform: translate(0, -50%);
+}
+.tooltip--left::after {
+	right: calc(100% + var(--offset));
+	transform: translate(0%, -50%);
+	top: 50%;
+}
+
+/* right */
+.tooltip--right::before {
+	top: 50%;
+	right: calc(-1 * var(--offset));
+	border-top: var(--bd-width) solid transparent;
+	border-bottom: var(--bd-width) solid transparent;
+	border-right: var(--bd-width) solid var(--c-bg);
+	transform: translate(0, -50%);
+}
+.tooltip--right::after {
+	left: calc(100% + var(--offset));
+	transform: translate(0%, -50%);
+	top: 50%;
+}
+
+/* top */
+.tooltip--top::before {
+	top: calc(-1 * var(--offset));
+	left: 50%;
+	border-left: var(--bd-width) solid transparent;
+	border-right: var(--bd-width) solid transparent;
+	border-top: var(--bd-width) solid var(--c-bg);
+	transform: translate(-50%, 0);
+}
+.tooltip--top::after {
+	left: 50%;
+	bottom: calc(100% + var(--offset));
+	transform: translate(-50%, 0);
+}
+
+/* bottom */
+.tooltip--bottom::before {
+	bottom: calc(-1 * var(--offset));
+	left: 50%;
+	border-left: var(--bd-width) solid transparent;
+	border-right: var(--bd-width) solid transparent;
+	border-bottom: var(--bd-width) solid var(--c-bg);
+	transform: translate(-50%, 0);
+}
+.tooltip--bottom::after {
+	left: 50%;
+	top: calc(100% + var(--offset));
+	transform: translate(-50%, 0);
+}
